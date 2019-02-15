@@ -1,0 +1,136 @@
+﻿@{
+    Layout = null;
+}
+
+<!DOCTYPE html>
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>@ViewBag.Title</title>
+    <!--必须-->
+    <meta name="viewport" content="width=device-width,initial-scale=1,user-scalable=0">
+    <title></title>
+
+    @Styles.Render("~/Content/wx/css")
+    @Scripts.Render("~/bundles/wx/js")
+    <style>
+        .desc {
+            font-size: 14px;
+            font-weight: 400;
+            line-height: 2em;
+            color: #8d8c92;
+        }
+    </style>
+ 
+   
+    <script type="text/javascript">
+
+        var timestamp = '@ViewBag.timestamp';
+        var ticket = '@ViewBag.jsapi_ticket';
+        var noncestr = '@ViewBag.noncestr';
+        var url = '@ViewBag.url';
+        // var url1 = Location.href.split('#')[0];
+        
+         wx.config({
+            debug: true,
+            appId:  '@ViewBag.appid',
+            nonceStr: '@ViewBag.noncestr',
+            signature: '@ViewBag.signature',
+            jsApiList: [
+                'checkJsApi',
+                'chooseImage',
+                'previewImage',
+                'uploadImage',
+                'downloadImage',
+                'getNetworkType',
+                'openLocation',
+                'getLocation',
+                'scanQRCode'
+
+            ]
+         });
+        wx.ready(function () {
+            // 1 判断当前版本是否支持指定 JS 接口，支持批量判断
+            document.querySelector('#checkJsApi').onclick = function () {
+                wx.checkJsApi({
+                    jsApiList: [
+                        'checkJsApi',
+                        'chooseImage',
+                        'previewImage',
+                        'uploadImage',
+                        'downloadImage',
+                        'getNetworkType',
+                        'openLocation',
+                        'getLocation',
+                        'scanQRCode'
+                    ],
+                    success: function (res) {
+                        alert(JSON.stringify(res));
+                    }
+                });
+            };
+            });
+
+      
+        wx.error(function (res) {
+            alert(res);
+        });
+
+
+    </script>
+</head>
+<body ontouchstart>
+    <div class="weui-toptips weui-toptips_warn js_tooltips" style="display: none;">错误提示</div>
+    <div class="page">
+        <div class="page__hd">
+            <h1 class="page__title">JSSDK</h1>
+            <p class="page__desc">微信JS接口演示</p>
+        </div>
+        <div class="page__bd">
+            <div class="page__bd">
+
+                <div class="weui-btn-area">
+                    <h3 id="menu-basic">基础接口</h3>
+                    <span class="desc">判断当前客户端是否支持指定JS接口</span>
+                    <a class="weui-btn weui-btn_primary" id="checkJsApi">checkJsApi</a>
+                </div>
+                <div class=weui-cells>
+                    <div class="weui-cell">
+                        <div class="weui-cell__hd"><label class="weui-label">经纬度</label></div>
+                        <div class="weui-cell__bd weui-cell_primary">
+
+                            <p>地址: <span id="lblLoacation"></span></p>
+                            <a class="weui-btn weui-btn_primary" id="btnCheckIn">签到</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script>
+
+
+        $('#btnCheckIn').onclick= function () {
+            wx.getLocation({
+                type: 'wgs84',
+                success: function (res) {
+                    var latitude = res.latitude; // 纬度，浮点数，范围为90 ~ -90
+                    var longitude = res.longitude; // 经度，浮点数，范围为180 ~ -180。
+                    var speed = res.speed; // 速度，以米/每秒计
+                    var accuracy = res.accuracy; // 位置精度
+                    $("#lblLoacation").text(latitude + "," + longitude);
+                    //解析坐标地址
+                    var location = latitude + "," + longitude;
+                    //$.ajax({
+
+                    //});
+                },
+                fail: function (res) {
+                    alert(JSON.stringify(res));
+                }
+            });
+        };
+    </script>
+   
+</body>
+</html>
